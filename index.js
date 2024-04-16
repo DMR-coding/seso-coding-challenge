@@ -30,7 +30,9 @@ function runSolutions(sourceCount) {
       syncLogSources.push(new LogSource());
     }
     try {
-      require("./solution/sync-sorted-merge")(syncLogSources, new Printer());
+      const printer = new Printer();
+      require("./solution/sync-sorted-merge")(syncLogSources, printer);
+      printer.done();
       resolve();
     } catch (e) {
       reject(e);
@@ -54,7 +56,11 @@ function runSolutions(sourceCount) {
       for (let i = 0; i < sourceCount; i++) {
         asyncLogSources.push(new LogSource());
       }
-      require("./solution/async-sorted-merge")(asyncLogSources, new Printer())
+
+      const printer = new Printer();
+
+      require("./solution/async-sorted-merge")(asyncLogSources, printer)
+        .then(() => printer.done())
         .then(resolve)
         .catch(reject);
     });

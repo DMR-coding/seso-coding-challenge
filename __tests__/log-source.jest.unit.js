@@ -26,4 +26,34 @@ describe("Log Source Behaviors", () => {
     entry = await source.popAsync();
     expect(entry).toBeFalsy();
   });
+
+  test("It should produce synchronous logs in chronological order", () => {
+    const source = new LogSource();
+    let lastMessage = source.pop();
+    let nextMessage;
+    while (lastMessage) {
+      nextMessage = source.pop();
+
+      if(nextMessage) {
+        expect(nextMessage.date.getTime()).toBeGreaterThanOrEqual(lastMessage.date.getTime());
+      }
+
+      lastMessage = nextMessage;
+
+    }
+  })
+
+  test("It should produce asynchronous logs in chronological order", async () => {
+    const source = new LogSource();
+    let lastMessage = source.pop();
+    let nextMessage;
+    while (lastMessage) {
+      nextMessage = await source.popAsync();
+
+      if(nextMessage) {
+        expect(nextMessage.date.getTime()).toBeGreaterThanOrEqual(lastMessage.date.getTime());
+      }
+      lastMessage = nextMessage;
+    }
+  })
 });
